@@ -1,0 +1,105 @@
+name: Galaxy integration tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  galaxy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GALAXY_TEST_USERNAME: ${{ secrets.GALAXY_TEST_USERNAME }}
+      GALAXY_TEST_PASSWORD: ${{ secrets.GALAXY_TEST_PASSWORD }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Set up Java for Allure
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps
+
+      - name: Install Allure CLI
+        run: npm install --global allure-commandline@2.34.1
+
+      - name: Start Galaxy container
+        run: |
+          docker run --detach \
+            --name galaxy-ci \
+            --publish 8080:80 \
+            --env GALAXY_DEFAULT_ADMIN_USER="${GALAXY_TEST_USERNAME}" \
+            --env GALAXY_DEFAULT_ADMIN_EMAIL=admin@galaxy.org \
+            --env GALAXY_DEFAULT_ADMIN_PASSWORD \
+            --env GALAXY_DEFAULT_ADMIN_KEY=fakekey \
+            --env GALAXY_CONFIG_ADMIN_USERS=admin@galaxy.org \
+            quay.io/bgruening/galaxy:latest
+
+      - name: Wait for Galaxy to become ready
+        run: |
+          for attempt in $(seq 1 120); do
+            if curl --fail --silent --show-error http://127.0.0.1:8080/api/version >/dev/null 2>&1; then
+              echo "Galaxy is ready."
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Galaxy did not become ready within 10 minutes."
+          docker logs galaxy-ci
+          exit 1
+
+      - name: Run pytest suite
+        run: python -m pytest -p no:allure_pytest --clean-alluredir
+
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          if find reports/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            allure generate reports/allure-results --output reports/allure-html-report --clean
+          else
+            echo "No Allure test results were generated."
+          fi
+
+      - name: Upload Allure results and HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: |
+            reports/allure-results/
+            reports/allure-html-report/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Show Galaxy logs on failure
+        if: failure()
+        run: docker logs galaxy-ci
+
+      - name: Stop Galaxy container
+        if: always()
+        run: |
+          if docker container inspect galaxy-ci >/dev/null 2>&1; then
+            docker rm --force galaxy-ci
+          fi

@@ -1,0 +1,26 @@
+# Test runner and BDD
+pytest>=9.0,<10
+pytest-bdd>=9.0,<10
+ 
+# Galaxy API access
+bioblend>=1.4
+requests>=2.32
+pyyaml>=6.0
+python-dotenv>=1.0
+ 
+# UI tests and accessibility scans
+pytest-playwright>=0.7
+axe-playwright-python>=0.1
+ 
+# Reporting
+pytest-html>=4.1
+allure-pytest-bdd
+ 
+# Security hygiene (TC-NF-005)
+pip-audit>=2.7
+
+#parallel runs
+pytest-xdist>=3.8.0
+
+#rerun tests 
+pytest-rerunfailures>=16.1

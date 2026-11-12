@@ -1,0 +1,38 @@
+# Local environment variables
+.env
+
+# IDE settings
+.idea/
+.vscode/
+
+# Virtual environments
+galaxyWorkflowQA/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# pytest and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+reports/myreport.html
+reports/allure-results/
+reports/allure-html-report/
+
+# Playwright test output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# macOS
+.DS_Store
+commandhistoryforsetup.txt
+SETUP-LOG.md
+.gitignore
+scripts/watch_workspace.py
