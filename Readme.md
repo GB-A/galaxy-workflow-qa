@@ -1,3 +1,7 @@
+
+[![Playwright CI]([(https://github.com/GB-A/galaxy-workflow-qa/actions/workflows/galaxy-tests.yml)]/badge.svg)](https://github.com/GB-A/galaxy-workflow-qa/actions/workflows/galaxy-tests.yml))
+
+
 # GitHub Actions: Galaxy integration tests
 
 The `Galaxy integration tests` workflow starts the official Galaxy Docker image,
