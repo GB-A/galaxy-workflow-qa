@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      GALAXY_TEST_USERNAME: ${{ secrets.GALAXY_TEST_USERNAME }}
+      GALAXY_TEST_USERNAME: ${{ vars.GALAXY_TEST_USERNAME }}
       GALAXY_TEST_PASSWORD: ${{ secrets.GALAXY_TEST_PASSWORD }}
 
     steps:
@@ -51,7 +51,7 @@ jobs:
             --publish 8080:80 \
             --env GALAXY_DEFAULT_ADMIN_USER="${GALAXY_TEST_USERNAME}" \
             --env GALAXY_DEFAULT_ADMIN_EMAIL=admin@galaxy.org \
-            --env GALAXY_DEFAULT_ADMIN_PASSWORD \
+            --env GALAXY_DEFAULT_ADMIN_PASSWORD="${GALAXY_TEST_PASSWORD}" \
             --env GALAXY_DEFAULT_ADMIN_KEY=fakekey \
             --env GALAXY_CONFIG_ADMIN_USERS=admin@galaxy.org \
             quay.io/bgruening/galaxy:latest
