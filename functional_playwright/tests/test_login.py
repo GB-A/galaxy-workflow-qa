@@ -33,7 +33,7 @@ def sign_in_with_user(page: Page) -> None:
 
 @then('I am taken to the Galaxy home page')
 def check_homepage(page: Page):
-    expect(page).to_have_url("http://locatehost:8080/")
+    expect(page).to_have_url("http://localhost:8080/")
 @then('the user menu shows the test user')
 def user_menu_is_shown(page: Page):
     username = os.getenv("GALAXY_TEST_USERNAME")
@@ -41,4 +41,4 @@ def user_menu_is_shown(page: Page):
         pytest.fail("Set GALAXY_TEST_USERNAME before running the login scenario.")
 
     home_page = HomePage(page)
-    home_page.check_user_menu_shows(username)
+    home_page.check_user_menu_shows("username")
