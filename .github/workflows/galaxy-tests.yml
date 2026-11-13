@@ -71,7 +71,7 @@ jobs:
           exit 1
 
       - name: Run pytest suite
-        run: python -m pytest --clean-alluredir
+        run: python -m pytest -p allure_pytest_bdd --alluredir=reports/allure-results --clean-alluredir
 
       - name: Generate Allure HTML report
         if: always()
