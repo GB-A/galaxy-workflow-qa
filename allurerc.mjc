@@ -1,0 +1,14 @@
+import { defineConfig } from "allure";
+
+export default defineConfig({
+  name: "Playwright BDD Report",
+  output: "./allure-report",
+  // Optional: Enables the Quality Gate GitHub Check on PRs
+  qualityGate: {
+    rules: [
+      {
+        maxFailures: 0,
+      },
+    ],
+  },
+});

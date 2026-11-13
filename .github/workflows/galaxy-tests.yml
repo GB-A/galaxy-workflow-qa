@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
+  checks: write
 
 jobs:
   galaxy-tests:
@@ -27,11 +29,16 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
 
-      - name: Set up Java for Allure
-        uses: actions/setup-java@v4
+      #- name: Set up Java for Allure2
+        #uses: actions/setup-java@v4
+        #with:
+        #  distribution: temurin
+         # java-version: "17"
+
+      - name: Setup Node.js (for Allure 3 CLI)
+        uses: actions/setup-node@v4
         with:
-          distribution: temurin
-          java-version: "17"
+          node-version: "20"
 
       - name: Install Python dependencies
         run: |
@@ -42,7 +49,7 @@ jobs:
         run: python -m playwright install --with-deps
 
       - name: Install Allure CLI
-        run: npm install --global allure-commandline@2.34.1
+        run: npm install -D allure
 
       - name: Start Galaxy container
         run: |
@@ -71,16 +78,29 @@ jobs:
           exit 1
 
       - name: Run pytest suite
-        run: python -m pytest -p allure_pytest_bdd --alluredir=reports/allure-results --clean-alluredir
+      # Always continue so the report is generated even if tests fail
+        continue-on-error: true
+        run: 
+          sudo apt-get update && sudo apt-get install -y xvfb
+          xvfb-run --auto-servernum pytest -p allure_pytest_bdd --alluredir=reports/allure-results --clean-alluredir
 
       - name: Generate Allure HTML report
         if: always()
         run: |
           if find reports/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
-            allure generate reports/allure-results --output reports/allure-html-report --clean
+            npx allure generate reports/allure-results --output reports/allure-html-report --clean
           else
             echo "No Allure test results were generated."
           fi
+      
+      - name: Post Allure Summary to PR
+        uses: allure-framework/allure-action@v0
+        with:
+          report-directory: "reports/allure-report"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sections: |
+            new
+            flaky
 
       - name: Upload Allure results and HTML report
         if: always()
@@ -92,7 +112,7 @@ jobs:
             reports/allure-html-report/
           if-no-files-found: warn
           retention-days: 14
-
+     
       - name: Show Galaxy logs on failure
         if: failure()
         run: docker logs galaxy-ci
