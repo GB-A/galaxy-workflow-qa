@@ -112,7 +112,18 @@ jobs:
             reports/allure-html-report/
           if-no-files-found: warn
           retention-days: 14
-     
+     # --- GitHub Pages Deployment Steps ---
+      - name: Upload artifact for GitHub Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports/allure-html-report/
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        id: deployment
+        uses: actions/deploy-pages@v4
+      # -------------------------------------
       - name: Show Galaxy logs on failure
         if: failure()
         run: docker logs galaxy-ci
