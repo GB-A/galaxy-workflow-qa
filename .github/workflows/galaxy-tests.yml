@@ -81,6 +81,7 @@ jobs:
           exit 1
 
       - name: Run pytest suite
+        id: pytest
       # Always continue so the report is generated even if tests fail
         continue-on-error: true
         run: |
@@ -137,3 +138,7 @@ jobs:
           if docker container inspect galaxy-ci >/dev/null 2>&1; then
             docker rm --force galaxy-ci
           fi
+      
+      - name: Mark run failed if pytest failed
+        if: always() && steps.pytest.outcome == 'failure'
+        run: exit 1
