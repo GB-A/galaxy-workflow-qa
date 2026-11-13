@@ -41,4 +41,4 @@ def user_menu_is_shown(page: Page):
         pytest.fail("Set GALAXY_TEST_USERNAME before running the login scenario.")
 
     home_page = HomePage(page)
-    home_page.check_user_menu_shows("username")
+    home_page.check_user_menu_shows(username)
