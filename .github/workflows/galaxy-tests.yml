@@ -80,7 +80,7 @@ jobs:
       - name: Run pytest suite
       # Always continue so the report is generated even if tests fail
         continue-on-error: true
-        run: 
+        run: |
           sudo apt-get update && sudo apt-get install -y xvfb
           xvfb-run --auto-servernum pytest -p allure_pytest_bdd --alluredir=reports/allure-results --clean-alluredir
 
