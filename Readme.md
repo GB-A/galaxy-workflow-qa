@@ -330,7 +330,7 @@ default through pytest configuration.
   `ebfb8f50c6abde6d`); dataset IDs were not available. See
   [issue #1](https://github.com/GB-A/galaxy-workflow-qa/issues/1) and the linked
   Actions run for diagnostics. This failure was observed in the Docker-based run;
-  the project maintainer reports that the local Galaxy setup on macOS does not
+  the project maintainer reports that the local Galaxy setup with dev branch does not
   show the same issue. Treat this as an environment-specific discrepancy to
   investigate, not as a confirmed root cause or proof that Docker itself is
   responsible.
