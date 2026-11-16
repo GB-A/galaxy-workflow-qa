@@ -194,6 +194,13 @@ Workflow deletion is an API cleanup operation invoked at the end of the UI
 scenario, not an API test. A failed assertion prevents the final cleanup step
 from running, leaving the workflow and history available for investigation.
 
+Galaxy deployments may default to different upload-dialog versions. The upload
+Page Object clicks **New upload Beta** when that option is present, then uses
+the visible local-file control; if the dialog is already in its newer mode, it
+uses the available control without requiring the toggle. This accounts for
+differences between the Docker test image and deployed Galaxy instances without
+assuming which version is the default.
+
 <a id="example-ui-result"></a>
 ### 🖥️ Example UI result
 
@@ -313,7 +320,7 @@ default through pytest configuration.
   `http://127.0.0.1:8080/api/version` responds.
 - **Browser launch fails on Linux:** install the Playwright browser
   dependencies and run headed tests under Xvfb.
-- **Docker/GitHub Actions Browse Files failure (run 43929164411):** the
+- **Upload dialog differs between environments (run 43929164411):** the
   workflow UI test failed in the `quay.io/bgruening/galaxy:latest` container
   while waiting for the accessible button named `Browse Files`. Playwright's
   `Locator.click` timed out after 30 seconds in
@@ -324,11 +331,13 @@ default through pytest configuration.
   `Upload Data 20261116T183310670555Z` (ID
   `ebfb8f50c6abde6d`); dataset IDs were not available. See the
   [failed Actions run](https://github.com/GB-A/galaxy-workflow-qa/actions/runs/43929164411)
-  and its report/artifacts, if available, for diagnostic attachments. This
-  failure was observed in the Docker-based run; the project maintainer reports
-  that the local Galaxy setup on macOS does not show the same issue. Treat this
-  as an environment-specific discrepancy to investigate, not as a confirmed
-  root cause or proof that Docker itself is responsible.
+  and its report/artifacts, if available, for diagnostic attachments. Galaxy
+  deployments may default to different upload dialogs: the Docker image may
+  expose the newer dialog as **New upload Beta**, while other instances may
+  use it by default. The Page Object now supports the toggle when present and
+  the available local-file controls in either mode. Treat the original failure
+  as an environment-specific UI discrepancy, not as proof that Docker itself
+  is responsible.
 - **Need to inspect a failed workflow:** use the workflow ID and dataset
   identifiers in the Allure failure context to locate the retained Galaxy
   resources.
