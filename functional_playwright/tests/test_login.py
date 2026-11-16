@@ -1,13 +1,11 @@
 import os, re
 import pytest
-from dotenv import load_dotenv
 from playwright.sync_api import Page, expect
 from pytest_bdd import given, when, then,  scenarios
 
 from functional_playwright.pages.homepagePO import HomePage
 from functional_playwright.pages.loginPO import LoginPage
 
-load_dotenv()
 scenarios('login.feature')
 
 
