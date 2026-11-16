@@ -1,4 +1,9 @@
 [![Playwright CI](https://github.com/GB-A/galaxy-workflow-qa/actions/workflows/galaxy-tests.yml/badge.svg)](https://github.com/GB-A/galaxy-workflow-qa/actions/workflows/galaxy-tests.yml)
+## Outstanding Issues: 
+ Issue Link | Issue Desription|
+| --- | --- |
+ [#1](https://github.com/GB-A/galaxy-workflow-qa/issues/1)|Ubuntu Docker Galaxy UI: Browse Files button not found in workflow upload step |
+
 
 # 🧬 Galaxy Workflow QA
 
