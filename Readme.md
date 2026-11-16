@@ -313,6 +313,22 @@ default through pytest configuration.
   `http://127.0.0.1:8080/api/version` responds.
 - **Browser launch fails on Linux:** install the Playwright browser
   dependencies and run headed tests under Xvfb.
+- **Docker/GitHub Actions Browse Files failure (run 43929164411):** the
+  workflow UI test failed in the `quay.io/bgruening/galaxy:latest` container
+  while waiting for the accessible button named `Browse Files`. Playwright's
+  `Locator.click` timed out after 30 seconds in
+  `test_a_scientist_launches_reads_qc_follows_the_run_and_reads_the_protein_counts`
+  (`functional_playwright/tests/test_run_workflow_ui.py`). The login test passed;
+  the workflow scenario did not get past the file-browse interaction. The log
+  reported `reads.tabular` and history
+  `Upload Data 20261116T183310670555Z` (ID
+  `ebfb8f50c6abde6d`); dataset IDs were not available. See the
+  [failed Actions run](https://github.com/GB-A/galaxy-workflow-qa/actions/runs/43929164411)
+  and its report/artifacts, if available, for diagnostic attachments. This
+  failure was observed in the Docker-based run; the project maintainer reports
+  that the local Galaxy setup on macOS does not show the same issue. Treat this
+  as an environment-specific discrepancy to investigate, not as a confirmed
+  root cause or proof that Docker itself is responsible.
 - **Need to inspect a failed workflow:** use the workflow ID and dataset
   identifiers in the Allure failure context to locate the retained Galaxy
   resources.
